@@ -1,0 +1,275 @@
+[
+  {
+    "id": "f001",
+    "sourceUrl": "https://www.xiaohongshu.com",
+    "title": "痛点反转公式",
+    "category": "测评",
+    "categoryTag": "tag-coral",
+    "likes": 234567,
+    "comments": 8921,
+    "saves": 45230,
+    "freshness": 78,
+    "platform": "小红书",
+    "description": "开头直击痛点，中段用产品逆转，结尾软性收尾不硬推，完播率极高",
+    "segments": [
+      {
+        "part": "开头",
+        "timeRange": "0-3s",
+        "shotType": "特写",
+        "content": "直接说出用户痛点，不铺垫不废话",
+        "example": "\"用了半年护肤品，痘痘没少一个…\"",
+        "intent": "3秒内钩住有相同困扰的目标用户，引发强烈共鸣"
+      },
+      {
+        "part": "中段",
+        "timeRange": "3-35s",
+        "shotType": "中景 + 产品特写切换",
+        "content": "还原使用场景，展示前后对比，让产品自己说话",
+        "example": "\"直到朋友推荐了这个，坚持用两周对比给你们看\"",
+        "intent": "前后对比制造反差感，强化产品可信度和说服力"
+      },
+      {
+        "part": "结尾",
+        "timeRange": "35-45s",
+        "shotType": "正面中景",
+        "content": "分享语气收尾，绝不硬推销",
+        "example": "\"现在每天素颜也敢出门了，感兴趣的可以自己试试~\"",
+        "intent": "降低防御感，提升收藏率和评论互动"
+      }
+    ]
+  },
+  {
+    "id": "f002",
+    "sourceUrl": "https://www.douyin.com",
+    "title": "劝退式钩子公式",
+    "category": "知识",
+    "categoryTag": "tag-amber",
+    "likes": 178934,
+    "comments": 12340,
+    "saves": 67890,
+    "freshness": 91,
+    "platform": "抖音",
+    "description": "用【劝退】制造好奇心，反向吸引精准用户点击，收藏率异常高",
+    "segments": [
+      {
+        "part": "开头",
+        "timeRange": "0-3s",
+        "shotType": "自拍正面",
+        "content": "强势劝退开场，制造强烈好奇",
+        "example": "\"不建议你们看这个视频，尤其是月薪5000以下的\"",
+        "intent": "用禁止语气激发逆反心理，精准筛选目标用户"
+      },
+      {
+        "part": "中段",
+        "timeRange": "3-40s",
+        "shotType": "画面 + 字幕辅助",
+        "content": "说明为什么劝退的真实理由，转折为干货内容",
+        "example": "\"因为这些方法你一旦知道了，就回不去了，太费钱了\"",
+        "intent": "建立悬念后用干货兑现承诺，维持用户信任"
+      },
+      {
+        "part": "结尾",
+        "timeRange": "40-50s",
+        "shotType": "中景",
+        "content": "引导评论和关注，留钩子到下期",
+        "example": "\"第二条更狠，关注我等更新\"",
+        "intent": "制造系列感，拉升关注率和回访率"
+      }
+    ]
+  },
+  {
+    "id": "f003",
+    "sourceUrl": "https://www.xiaohongshu.com",
+    "title": "时间线成长公式",
+    "category": "Vlog",
+    "categoryTag": "tag-jade",
+    "likes": 321456,
+    "comments": 15670,
+    "saves": 89012,
+    "freshness": 65,
+    "platform": "小红书",
+    "description": "用清晰时间轴展示成长过程，真实感强，粉丝粘性高",
+    "segments": [
+      {
+        "part": "开头",
+        "timeRange": "0-5s",
+        "shotType": "对比画面",
+        "content": "直接展示起点和终点的强烈对比",
+        "example": "\"这是我30天前，这是现在\"（配字幕强调变化数据）",
+        "intent": "用数字化的变化结果制造震撼感，让人想看全程"
+      },
+      {
+        "part": "中段",
+        "timeRange": "5-55s",
+        "shotType": "Vlog混剪",
+        "content": "按时间线分段，每个阶段1个关键转折点",
+        "example": "\"第1天：完全放弃，第7天：看到一点变化，第15天：开始上瘾\"",
+        "intent": "节奏感强的进展叙述，维持完播率"
+      },
+      {
+        "part": "结尾",
+        "timeRange": "55-60s",
+        "shotType": "正面",
+        "content": "总结核心方法+邀请互动",
+        "example": "\"最重要的一步是XX，你们试过吗？评论区告诉我\"",
+        "intent": "提炼可复用的精华，引导高质量互动"
+      }
+    ]
+  },
+  {
+    "id": "f004",
+    "sourceUrl": "https://www.douyin.com",
+    "title": "数据背书公式",
+    "category": "测评",
+    "categoryTag": "tag-coral",
+    "likes": 145678,
+    "comments": 6789,
+    "saves": 34560,
+    "freshness": 83,
+    "platform": "抖音",
+    "description": "用具体数字建立可信度，适合工具类、效率类内容",
+    "segments": [
+      {
+        "part": "开头",
+        "timeRange": "0-3s",
+        "shotType": "字幕大字特写",
+        "content": "用具体数字作为钩子",
+        "example": "\"我用这个方法，3天从0涨了1200粉\"",
+        "intent": "数字的精确性增加可信度，同时制造好奇"
+      },
+      {
+        "part": "中段",
+        "timeRange": "3-45s",
+        "shotType": "屏幕录制 + 字幕",
+        "content": "展示数据来源，分步骤讲解方法",
+        "example": "「展示后台截图」+ 分步说明每个动作",
+        "intent": "截图作为证据链，提升方法的可复制性"
+      },
+      {
+        "part": "结尾",
+        "timeRange": "45-55s",
+        "shotType": "正面",
+        "content": "总结核心 + 引导收藏",
+        "example": "\"这3步缺一不可，收藏起来慢慢看\"",
+        "intent": "收藏引导加强内容传播，提升账号权重"
+      }
+    ]
+  },
+  {
+    "id": "f005",
+    "sourceUrl": "https://www.xiaohongshu.com",
+    "title": "场景代入公式",
+    "category": "种草",
+    "categoryTag": "tag-lavender",
+    "likes": 267890,
+    "comments": 9870,
+    "saves": 56780,
+    "freshness": 88,
+    "platform": "小红书",
+    "description": "通过真实生活场景引入产品，用户代入感强，转化率高",
+    "segments": [
+      {
+        "part": "开头",
+        "timeRange": "0-5s",
+        "shotType": "生活场景Vlog",
+        "content": "展示真实日常场景中遭遇的问题",
+        "example": "\"今天在咖啡馆工作3小时，MacBook热得烫手了\"",
+        "intent": "日常场景让用户秒代入，降低广告感"
+      },
+      {
+        "part": "中段",
+        "timeRange": "5-40s",
+        "shotType": "产品使用过程",
+        "content": "在场景中自然引入产品，展示使用体验",
+        "example": "\"随手放上这个散热架，温度马上降了7度\"",
+        "intent": "产品出现时机自然，不突兀，提升转化意愿"
+      },
+      {
+        "part": "结尾",
+        "timeRange": "40-50s",
+        "shotType": "近景",
+        "content": "个人真实评价 + 链接引导",
+        "example": "\"我已经回购三次了，真的挺好用的，链接在主页\"",
+        "intent": "真实口吻增加可信度，引导商品页转化"
+      }
+    ]
+  },
+  {
+    "id": "f006",
+    "sourceUrl": "https://www.douyin.com",
+    "title": "问题解答公式",
+    "category": "知识",
+    "categoryTag": "tag-amber",
+    "likes": 198765,
+    "comments": 18920,
+    "saves": 78900,
+    "freshness": 95,
+    "platform": "抖音",
+    "description": "直接回答高频问题，SEO友好，搜索流量大，粉丝质量高",
+    "segments": [
+      {
+        "part": "开头",
+        "timeRange": "0-2s",
+        "shotType": "字幕弹出",
+        "content": "直接点明要回答的问题",
+        "example": "\"有人问我：XXX怎么做到的？\"",
+        "intent": "评论引导型开头，搜索用户直接命中需求"
+      },
+      {
+        "part": "中段",
+        "timeRange": "2-45s",
+        "shotType": "讲解 + 步骤字幕",
+        "content": "清晰分步回答，每步一句话",
+        "example": "\"第一步，第二步，第三步，注意这里…\"",
+        "intent": "步骤化表达易于理解和收藏，增加完播率"
+      },
+      {
+        "part": "结尾",
+        "timeRange": "45-55s",
+        "shotType": "正面",
+        "content": "邀请更多问题到评论区",
+        "example": "\"还有什么问题评论区告诉我，每个都看\"",
+        "intent": "制造互动型内容循环，评论区活跃带动算法推流"
+      }
+    ]
+  },
+  {
+    "id": "f007",
+    "sourceUrl": "https://www.xiaohongshu.com",
+    "title": "人设情绪公式",
+    "category": "Vlog",
+    "categoryTag": "tag-jade",
+    "likes": 456789,
+    "comments": 23450,
+    "saves": 123456,
+    "freshness": 72,
+    "platform": "小红书",
+    "description": "展示真实情绪状态，用脆弱和真实感建立深度连接，粉丝粘性极高",
+    "segments": [
+      {
+        "part": "开头",
+        "timeRange": "0-5s",
+        "shotType": "自拍",
+        "content": "展示真实的情绪状态，不加滤镜",
+        "example": "\"今天想摸鱼，不想工作，也不想运动\"",
+        "intent": "反完美主义内容更容易让人放下防御，建立情感连接"
+      },
+      {
+        "part": "中段",
+        "timeRange": "5-50s",
+        "shotType": "日常混剪",
+        "content": "记录普通的一天，保留真实细节和情绪变化",
+        "example": "\"最后还是去运动了，不是因为自律，就是闲着也是闲着\"",
+        "intent": "非励志的真实性更能共鸣，评论区会产生大量认同留言"
+      },
+      {
+        "part": "结尾",
+        "timeRange": "50-60s",
+        "shotType": "正面",
+        "content": "一句轻松的总结，不说教",
+        "example": "\"总之今天也算过完了，明天继续\"",
+        "intent": "轻松结尾不给压力，粉丝会觉得你是朋友而不是博主"
+      }
+    ]
+  }
+]
