@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { getCountKey } from '../api/auth'
 import * as XLSX from 'xlsx'
 import PageHeader from '../components/PageHeader'
 import { generateScript, refineScript, analyzeUrl, getPlatformFromUrl } from '../api/llm'
@@ -65,6 +66,7 @@ function downloadExcel(script, topic, duration) {
 
 export default function ScriptGen() {
   const location = useLocation()
+  const navigate = useNavigate()
   const [topic, setTopic] = useState('')
   const [duration, setDuration] = useState(60)
   const [customDuration, setCustomDuration] = useState('')
@@ -85,6 +87,14 @@ export default function ScriptGen() {
   const [urlImportInput, setUrlImportInput] = useState('')
   const [urlImporting, setUrlImporting] = useState(false)
   const [urlImportError, setUrlImportError] = useState('')
+  // History
+  const [history, setHistory] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('scriptHistory') || '[]') } catch { return [] }
+  })
+  const [showHistory, setShowHistory] = useState(false)
+  // Excel download count
+  const [dlCount, setDlCount] = useState(() => parseInt(localStorage.getItem(getCountKey('excelDownloadCount')) || '0', 10))
+  const [dlBlocked, setDlBlocked] = useState(false)
 
   useEffect(() => {
     if (location.state?.topic) setTopic(location.state.topic)
@@ -126,6 +136,12 @@ ${formula.segments.map((s, i) => `${i + 1}. [${s.part}] ${s.timeRange} - 镜头�
         formulaContent: buildFormulaContent(selectedFormula),
       })
       setResult(data)
+      setHistory(prev => {
+        const entry = { id: Date.now().toString(), topic: topic.trim(), duration: finalDuration, contentType, style, result: data, savedAt: new Date().toISOString() }
+        const next = [entry, ...prev].slice(0, 20)
+        localStorage.setItem('scriptHistory', JSON.stringify(next))
+        return next
+      })
     } catch (e) {
       setError(e.message || '生成失败，请检查 API Key 或重试')
     } finally {
@@ -147,6 +163,24 @@ ${formula.segments.map((s, i) => `${i + 1}. [${s.part}] ${s.timeRange} - 镜头�
     } finally {
       setRefining(false)
     }
+  }
+
+  const handleRestoreHistory = (item) => {
+    setTopic(item.topic)
+    setDuration(item.duration)
+    setContentType(item.contentType)
+    setStyle(item.style)
+    setResult(item.result)
+    setActiveSegment(null)
+    setShowHistory(false)
+  }
+
+  const handleDeleteHistory = (id) => {
+    setHistory(prev => {
+      const next = prev.filter(x => x.id !== id)
+      localStorage.setItem('scriptHistory', JSON.stringify(next))
+      return next
+    })
   }
 
   const isValidUrl = (s) => { try { new URL(s); return true } catch { return false } }
@@ -177,7 +211,27 @@ ${formula.segments.map((s, i) => `${i + 1}. [${s.part}] ${s.timeRange} - 镜头�
 
   return (
     <div className="page-container">
-      <PageHeader title="脚本生成器" subtitle="AI 生成精准分镜，可润色下载" />
+      <PageHeader
+        title="脚本生成器"
+        subtitle="AI 生成精准分镜，可润色下载"
+        action={
+          <button
+            onClick={() => setShowHistory(true)}
+            className="relative w-9 h-9 rounded-full flex items-center justify-center"
+            style={{ background: 'var(--bg-card-2)', border: '1px solid var(--border)' }}
+          >
+            <span className="text-base">📋</span>
+            {history.length > 0 && (
+              <span
+                className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center font-mono"
+                style={{ background: 'var(--amber)', color: '#000', fontSize: 9 }}
+              >
+                {history.length > 9 ? '9+' : history.length}
+              </span>
+            )}
+          </button>
+        }
+      />
 
       <div className="px-5 flex flex-col gap-4">
         {/* Formula hint */}
@@ -508,20 +562,90 @@ ${formula.segments.map((s, i) => `${i + 1}. [${s.part}] ${s.timeRange} - 镜头�
             </div>
 
             {/* Download */}
-            <button
-              className="btn-amber w-full py-3.5 text-sm flex items-center justify-center gap-2 mb-6"
-              onClick={() => downloadExcel(result, topic, finalDuration)}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="7 10 12 15 17 10"/>
-                <line x1="12" y1="15" x2="12" y2="3"/>
-              </svg>
-              下载 Excel 分镜表格
-            </button>
+            <div className="mb-6">
+              <button
+                className="btn-amber w-full py-3.5 text-sm flex items-center justify-center gap-2"
+                onClick={() => {
+                  if (dlCount >= 5) { setDlBlocked(true); return }
+                  downloadExcel(result, topic, finalDuration)
+                  const next = dlCount + 1
+                  localStorage.setItem(getCountKey('excelDownloadCount'), String(next))
+                  setDlCount(next)
+                  setDlBlocked(false)
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                {dlCount >= 5 ? '🔒 下载 Excel（需升级）' : `下载 Excel 分镜表格（剩余 ${5 - dlCount} 次）`}
+              </button>
+              {dlBlocked && (
+                <div className="mt-2 px-4 py-3 rounded-xl flex items-center justify-between"
+                  style={{ background: 'rgba(255,107,107,0.08)', border: '1px solid rgba(255,107,107,0.2)' }}>
+                  <p className="text-xs" style={{ color: 'var(--coral)' }}>已用完 5 次免费下载</p>
+                  <button
+                    className="text-xs px-3 py-1 rounded-lg"
+                    style={{ background: 'rgba(168,85,247,0.15)', color: 'var(--lavender)', border: '1px solid rgba(168,85,247,0.3)' }}
+                    onClick={() => navigate('/upgrade')}
+                  >去升级 →</button>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
+
+      {/* History bottom sheet */}
+      {showHistory && (
+        <div
+          className="fixed inset-0 z-50 flex flex-col justify-end"
+          style={{ background: 'rgba(8,8,16,0.75)' }}
+          onClick={() => setShowHistory(false)}
+        >
+          <div
+            className="rounded-t-3xl p-5 fade-up"
+            style={{ background: 'var(--bg-page)', border: '1px solid var(--border)', maxHeight: '70vh', overflowY: 'auto' }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>脚本历史记录</p>
+              <button
+                onClick={() => setShowHistory(false)}
+                className="w-7 h-7 rounded-full flex items-center justify-center"
+                style={{ background: 'var(--bg-card-2)', border: '1px solid var(--border)', color: 'var(--text-muted)' }}
+              >✕</button>
+            </div>
+            {history.length === 0 ? (
+              <p className="text-sm text-center py-8" style={{ color: 'var(--text-muted)' }}>还没有生成过脚本</p>
+            ) : (
+              <div className="flex flex-col gap-2 pb-4">
+                {history.map(item => (
+                  <div key={item.id} className="card p-3 flex items-center gap-3">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>{item.topic}</p>
+                      <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
+                        {item.contentType} · {item.duration}s · {new Date(item.savedAt).toLocaleDateString('zh-CN', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => handleRestoreHistory(item)}
+                      className="text-xs px-3 py-1.5 rounded-lg flex-shrink-0"
+                      style={{ background: 'rgba(245,158,11,0.12)', color: 'var(--amber)', border: '1px solid rgba(245,158,11,0.3)' }}
+                    >恢复</button>
+                    <button
+                      onClick={() => handleDeleteHistory(item.id)}
+                      className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 text-xs"
+                      style={{ background: 'var(--bg-card-2)', color: 'var(--text-muted)', border: '1px solid var(--border)' }}
+                    >✕</button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

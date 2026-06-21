@@ -180,6 +180,89 @@ export async function analyzeUrl(url) {
   ])
 }
 
+const ANALYZE_VIDEO_PROMPT = `你是一位专业的短视频数据分析师，服务于小红书/抖音创作者。
+用户提供了视频数据，请深度分析该视频表现并给出可操作的改进建议。
+
+请返回一个 JSON 对象（不要加任何其他文字）：
+{
+  "score": 75,
+  "factors": [
+    { "name": "开头钩子", "score": 80, "tip": "具体建议" },
+    { "name": "话题匹配度", "score": 65, "tip": "具体建议" },
+    { "name": "发布时机", "score": 70, "tip": "具体建议" },
+    { "name": "内容完播率", "score": 68, "tip": "具体建议" }
+  ],
+  "commentInsights": {
+    "topCommentType": "建议/求教类",
+    "percentage": "约55%",
+    "meaning": "观众在积极寻求更多干货",
+    "suggestion": "具体的内容策略建议"
+  },
+  "suggestions": ["建议1", "建议2", "建议3"]
+}
+
+评分参考：完播率>70%=90分；50-70%=70分；<50%=50分。点赞率>5%=钩子85+；2-5%=70；<2%=60。综合评分加权：完播率30%、开头钩子30%、话题匹配20%、发布时机20%。
+评论区类型："求链接/在哪买"=种草欲强；"好详细/求教程"=内容有价值；"哈哈哈/太真实了"=共鸣强；"我也是"=共情型。`
+
+export async function analyzeVideoData({ url, manualData }) {
+  let userPrompt = ''
+  if (url) {
+    const platform = detectPlatform(url)
+    userPrompt = `视频链接：${url}（${platform}平台）\n请基于该平台内容规律给出分析，无法获取真实播放数据，请基于平台特征给出合理推断。`
+  } else {
+    const { views, completionRate, likes, comments, shares, followerGain, topCommentNote } = manualData || {}
+    userPrompt = `视频真实数据：
+播放量：${views || '未填'}
+完播率：${completionRate || '未填'}%
+点赞数：${likes || '未填'}
+评论数：${comments || '未填'}
+分享数：${shares || '未填'}
+涨粉数：${followerGain || '未填'}
+${topCommentNote ? `评论区高赞内容描述：${topCommentNote}` : ''}
+请基于以上真实数据进行深度分析并给出改进建议。`
+  }
+  try {
+    return await callAPI([
+      { role: 'system', content: ANALYZE_VIDEO_PROMPT },
+      { role: 'user', content: userPrompt },
+    ])
+  } catch (e) {
+    if (e.message === 'NO_API_KEY') return getMockVideoAnalysis(manualData)
+    throw e
+  }
+}
+
+function getMockVideoAnalysis(manualData) {
+  const cr = parseFloat(manualData?.completionRate) || 65
+  const views = parseInt(manualData?.views) || 8400
+  const likes = parseInt(manualData?.likes) || 320
+  const likeRate = views > 0 ? (likes / views) * 100 : 3.8
+  const crScore = cr > 70 ? 88 : cr > 50 ? 72 : 52
+  const hookScore = likeRate > 5 ? 90 : likeRate > 2 ? 74 : 58
+  const topicScore = 71
+  const timingScore = 68
+  return {
+    score: Math.round(crScore * 0.3 + hookScore * 0.3 + topicScore * 0.2 + timingScore * 0.2),
+    factors: [
+      { name: '开头钩子', score: hookScore, tip: hookScore >= 80 ? '点赞率表现优秀，说明开头钩子有效，继续保持' : '建议在前3秒抛出更有悬念的问题或反差数据，提升停留率' },
+      { name: '话题匹配度', score: topicScore, tip: '话题标签与内容基本匹配，可尝试加1-2个更垂直的细分话题标签提升精准流量' },
+      { name: '发布时机', score: timingScore, tip: '建议尝试工作日晚7-9点或周末上午10-12点，这两个时段用户活跃度最高' },
+      { name: '内容完播率', score: crScore, tip: cr >= 70 ? `完播率${cr}%表现优秀！内容节奏控制得很好，继续保持` : `完播率${cr}%有提升空间，建议在视频60%处预告"结尾有彩蛋"，减少中途流失` },
+    ],
+    commentInsights: {
+      topCommentType: '求教/建议类',
+      percentage: '约55%',
+      meaning: '观众在积极索要更多干货，说明内容有价值但观众还想要更深入的内容',
+      suggestion: "下条视频可以做续集，结尾问：'你还想看哪个步骤的详解？' 既引导互动也为下期预热",
+    },
+    suggestions: [
+      `完播率${cr}%${cr >= 70 ? '已达优秀水平，保持内容节奏' : '——建议删减中段冗余内容，或在60%处加入一个新的悬念节点'}`,
+      '评论区求教类评论占多数，这是强需求信号——出一个专题系列会比单视频涨粉效果好3-5倍',
+      `点赞率${likeRate.toFixed(1)}%${likeRate >= 5 ? '，表现优秀' : '——结尾明确说出"觉得有用点个赞"，不要依赖用户自觉'}`,
+    ],
+  }
+}
+
 function getMockScript(topic, duration) {
   const seg = (s, e, shot, scene, dlg, cap, bgm, intent) => ({
     timeRange: `${s}-${e}s`,
